@@ -3,49 +3,48 @@
 
 #define MAX 100
 
-int heap[MAX];
+int heap[MAX + 1];  // 인덱스를 1부터 사용하기 위해 배열 크기를 MAX+1로 설정
 int heap_size = 0;
 
 // 힙에 데이터 삽입
 void insert(int data) {
-    int i = ++heap_size;
+    int i = ++heap_size;  // 힙에 삽입할 위치
 
-    while (i != 1 && data > heap[i / 2]) {
+    // 부모 노드와 비교하며 큰 값을 위로 올림
+    while (i != 1 && data > heap[i / 2]) { 
         heap[i] = heap[i / 2];
         i /= 2;
     }
-    heap[i] = data;
+    heap[i] = data;  // 삽입된 데이터
 }
 
 // 힙의 루트(최댓값) 삭제
 int delete() {
-    int parent, child;
-    int data, temp;
-
     if (heap_size == 0) {
         printf("Heap is empty.\n");
         return -1;
     }
 
-    data = heap[1];
-    temp = heap[heap_size--];
-    parent = 1;
-    child = 2;
+    int data = heap[1];  // 루트값 저장
+    int temp = heap[heap_size--];  // 마지막 요소 저장 후 heap_size 감소
+    int parent = 1;
+    int child = 2;
 
+    // 자식 노드와 비교하며 힙을 재정렬
     while (child <= heap_size) {
         if (child < heap_size && heap[child] < heap[child + 1]) {
-            child++;
+            child++;  // 더 큰 자식 선택
         }
 
-        if (temp >= heap[child]) break;
+        if (temp >= heap[child]) break;  // 힙 속성 유지
 
-        heap[parent] = heap[child];
-        parent = child;
-        child *= 2;
+        heap[parent] = heap[child];  // 자식 노드를 부모에 저장
+        parent = child;  // 부모를 자식으로 이동
+        child *= 2;  // 자식 노드로 이동
     }
 
-    heap[parent] = temp;
-    return data;
+    heap[parent] = temp;  // 재배치된 값을 적절한 위치에 삽입
+    return data;  // 삭제된 루트값 반환
 }
 
 // 힙 출력
@@ -59,7 +58,7 @@ void print_heap() {
 
 // 힙 정렬
 void heap_sort() {
-    int temp_heap[MAX];
+    int temp_heap[MAX + 1];  // 힙 복사본 저장
     int temp_size = heap_size;
 
     // 기존 힙 백업
@@ -69,7 +68,7 @@ void heap_sort() {
 
     printf("Heap Sort Result: ");
     while (heap_size > 0) {
-        printf("%d ", delete());
+        printf("%d ", delete());  // 루트(최댓값)를 삭제하며 출력
     }
     printf("\n");
 
@@ -92,7 +91,11 @@ int main() {
             case 1:
                 printf("Enter data: ");
                 scanf("%d", &data);
-                insert(data);
+                if (heap_size < MAX) {
+                    insert(data);
+                } else {
+                    printf("Heap is full.\n");
+                }
                 break;
             case 2:
                 printf("Deleted data: %d\n", delete());
